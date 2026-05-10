@@ -1,26 +1,122 @@
-	1	
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avra Menu Training</title>
-    <script src="[https://unpkg.com/react@18/umd/react.development.js](https://unpkg.com/react@18/umd/react.development.js)"></script>
-    <script src="[https://unpkg.com/react-dom@18/umd/react-dom.development.js](https://unpkg.com/react-dom@18/umd/react-dom.development.js)"></script>
-    <script src="[https://unpkg.com/@babel/standalone/babel.min.js](https://unpkg.com/@babel/standalone/babel.min.js)"></script>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;700&display=swap](https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;700&display=swap)" rel="stylesheet">
+    <title>Avra Beverly Hills - Training</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
     </style>
 </head>
-<body>
+<body class="bg-stone-50">
     <div id="root"></div>
     <script type="text/babel">
-        // PASTE THE ENTIRE CONTENT OF avra_flashcards.jsx HERE
-        // (Remember to remove the "export default App;" line at the very bottom)
-        
+        const { useState, useEffect, useMemo } = React;
+
+        const MENU_DATA = [
+            { category: "Salades", item: "Roasted Beets", description: "Marinated with EVOO, served over garlic and almond purée." },
+            { category: "Salades", item: "Romaine", description: "Hearts of romaine, feta, creamy dill dressing." },
+            { category: "Salades", item: "Greek Salad", description: "Vine-ripened tomato, peppers, onions, Kalamata olives, feta cheese, red wine, olive oil vinaigrette." },
+            { category: "Salades", item: "Spring Salad", description: "Haricot vert, yellow beans, cherry tomatoes, frisée, scallions, fresh corn, endives, crimson red pears, champagne vinaigrette." },
+            { category: "Appetizers", item: "Fish Soup", description: "Wild Chilean sea bass, fennel, potato, light tomato fish broth." },
+            { category: "Appetizers", item: "Saganaki", description: "Lightly fried kefalograviera cheese (vegetarian)." },
+            { category: "Appetizers", item: "Halloumi", description: "Simply grilled sliced Cypriot sheep's milk cheese (vegetarian)." },
+            { category: "Appetizers", item: "Calamari", description: "Lightly Fried or Simply Grilled." },
+            { category: "Appetizers", item: "Avra Chips", description: "Traditional crispy zucchini & eggplant chips with tzatziki." },
+            { category: "Appetizers", item: "Classic Spreads", description: "Choice of three: Tzatziki, Fava, Melintzanosalata, Tarama (salted roe), Skordalia, Htipiti served with pita." },
+            { category: "Appetizers", item: "Chilean Sea Bass Souvlaki", description: "Grilled and served over a roasted red pepper sauce." },
+            { category: "Appetizers", item: "Grilled Octopus", description: "Sashimi grade jumbo octopus, vidalia onions, capers, bell peppers, red wine vinaigrette." },
+            { category: "Appetizers", item: "Crab Cake", description: "Maryland jumbo lump crab, lentils, mustard aioli." },
+            { category: "Sashimi & Ceviche", item: "Salmon Sashimi", description: "Cucumber chimichurri, micro cilantro, pepper, EVOO, Mediterranean sea salt." },
+            { category: "Sashimi & Ceviche", item: "Hamachi Sashimi", description: "Micro parsley, red peppers, mediterranean sea salt, jalapeño, EVOO." },
+            { category: "Sashimi & Ceviche", item: "Yellow Tail Jalapeno", description: "Ponzu sauce, soy sauce, sesame oil, EVOO, lime zest, jalapeño, pink peppercorn, Japanese eggplant shavings." },
+            { category: "By The Pound", item: "Fagri (Red Porgy)", description: "The 'king of the Aegean' – firm, tasty Mediterranean white snapper." },
+            { category: "By The Pound", item: "Lavraki (Branzino)", description: "Grilled lean mild Mediterranean sea-bass served with horta." },
+            { category: "By The Pound", item: "Lithrini (Pink Bream)", description: "The 'Greek pride' – from the white snapper family, a lean fish with a delicate flavor." },
+            { category: "From The Sea", item: "Chilean Sea Bass 'Plaki'", description: "Oven baked with vidalia onions, potato, herbs, light tomato fish broth." },
+            { category: "From The Land", item: "Lamb Chops", description: "Charcoal grilled and served with lemon potatoes." }
+        ];
+
+        const App = () => {
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [filter, setFilter] = useState("All");
+            const [mastered, setMastered] = useState([]);
+            const [testMode, setTestMode] = useState(false);
+            const [userInput, setUserInput] = useState("");
+            const [showAnswer, setShowAnswer] = useState(false);
+
+            const categories = ["All", ...new Set(MENU_DATA.map(item => item.category))];
+            const filteredCards = filter === "All" ? MENU_DATA : MENU_DATA.filter(card => card.category === filter);
+            const currentCard = filteredCards[currentIndex];
+
+            const toggleMastered = (item) => {
+                setMastered(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+            };
+
+            return (
+                <div className="min-h-screen p-4 md:p-8 max-w-2xl mx-auto">
+                    <header className="mb-6 text-center">
+                        <h1 className="text-3xl font-serif font-bold text-stone-800">Avra Training</h1>
+                        <div className="flex justify-center gap-2 mt-4">
+                            <button onClick={() => setTestMode(false)} className={`px-4 py-1 rounded text-xs font-bold ${!testMode ? 'bg-stone-800 text-white' : 'bg-white border'}`}>FLASHCARDS</button>
+                            <button onClick={() => setTestMode(true)} className={`px-4 py-1 rounded text-xs font-bold ${testMode ? 'bg-blue-600 text-white' : 'bg-white border'}`}>TEST ÉCRIT</button>
+                        </div>
+                    </header>
+
+                    <div className="flex flex-wrap gap-2 mb-6 justify-center">
+                        {categories.map(cat => (
+                            <button key={cat} onClick={() => {setFilter(cat); setCurrentIndex(0);}} className={`px-2 py-1 rounded-full text-[10px] font-bold border ${filter === cat ? 'bg-stone-800 text-white' : 'bg-white text-stone-500'}`}>{cat}</button>
+                        ))}
+                    </div>
+
+                    {!testMode ? (
+                        <div className="relative h-80 w-full mb-8 cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
+                            <div className={`relative w-full h-full transition-transform duration-500 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
+                                <div className="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-8 border">
+                                    <span className="text-[10px] text-stone-400 font-bold uppercase">{currentCard.category}</span>
+                                    <h2 className="text-3xl font-serif text-center mt-2">{currentCard.item}</h2>
+                                    <p className="mt-8 text-stone-300 text-[10px] font-bold tracking-widest">TAP POUR RÉVÉLER</p>
+                                </div>
+                                <div className="absolute w-full h-full backface-hidden bg-stone-800 text-white rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center text-center rotate-y-180">
+                                    <p className="text-xl italic">"{currentCard.description}"</p>
+                                    <button onClick={(e) => { e.stopPropagation(); toggleMastered(currentCard.item); }} className={`mt-6 px-4 py-2 rounded-full text-xs font-bold ${mastered.includes(currentCard.item) ? 'bg-green-600' : 'bg-white text-black'}`}>
+                                        {mastered.includes(currentCard.item) ? 'MAÎTRISÉ' : 'MARQUER COMME APPRIS'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border">
+                            <h2 className="text-xl font-serif text-center text-blue-600 font-bold">{currentCard.item}</h2>
+                            <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Écrivez la description ici..." className="w-full h-32 p-4 mt-4 bg-stone-50 border rounded-xl focus:outline-none focus:border-blue-500" />
+                            {showAnswer && <div className="mt-4 p-4 bg-blue-50 rounded-lg text-sm italic">"{currentCard.description}"</div>}
+                            <div className="flex gap-2 mt-4">
+                                <button onClick={() => setShowAnswer(!showAnswer)} className="flex-1 bg-stone-800 text-white py-2 rounded-lg font-bold text-xs uppercase">Vérifier</button>
+                                <button onClick={() => toggleMastered(currentCard.item)} className={`px-4 py-2 rounded-lg border ${mastered.includes(currentCard.item) ? 'bg-green-500 text-white border-green-500' : ''}`}>✓</button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex justify-between items-center">
+                        <button onClick={() => {setCurrentIndex((currentIndex - 1 + filteredCards.length) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Précédent</button>
+                        <span className="text-[10px] font-bold text-stone-400">{currentIndex + 1} / {filteredCards.length}</span>
+                        <button onClick={() => {setCurrentIndex((currentIndex + 1) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Suivant</button>
+                    </div>
+                </div>
+            );
+        };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
