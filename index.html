@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,10 +24,10 @@
         const { useState, useEffect, useMemo } = React;
 
         const MENU_DATA = [
-            { category: "Salades", item: "Roasted Beets", description: "Marinated with EVOO, served over garlic and almond purée." },
-            { category: "Salades", item: "Romaine", description: "Hearts of romaine, feta, creamy dill dressing." },
-            { category: "Salades", item: "Greek Salad", description: "Vine-ripened tomato, peppers, onions, Kalamata olives, feta cheese, red wine, olive oil vinaigrette." },
-            { category: "Salades", item: "Spring Salad", description: "Haricot vert, yellow beans, cherry tomatoes, frisée, scallions, fresh corn, endives, crimson red pears, champagne vinaigrette." },
+            { category: "Salads", item: "Roasted Beets", description: "Marinated with EVOO, served over garlic and almond purée." },
+            { category: "Salads", item: "Romaine", description: "Hearts of romaine, feta, creamy dill dressing." },
+            { category: "Salads", item: "Greek Salad", description: "Vine-ripened tomato, peppers, onions, Kalamata olives, feta cheese, red wine, olive oil vinaigrette." },
+            { category: "Salads", item: "Spring Salad", description: "Haricot vert, yellow beans, cherry tomatoes, frisée, scallions, fresh corn, endives, crimson red pears, champagne vinaigrette." },
             { category: "Appetizers", item: "Fish Soup", description: "Wild Chilean sea bass, fennel, potato, light tomato fish broth." },
             { category: "Appetizers", item: "Saganaki", description: "Lightly fried kefalograviera cheese (vegetarian)." },
             { category: "Appetizers", item: "Halloumi", description: "Simply grilled sliced Cypriot sheep's milk cheese (vegetarian)." },
@@ -70,7 +70,7 @@
                         <h1 className="text-3xl font-serif font-bold text-stone-800">Avra Training</h1>
                         <div className="flex justify-center gap-2 mt-4">
                             <button onClick={() => setTestMode(false)} className={`px-4 py-1 rounded text-xs font-bold ${!testMode ? 'bg-stone-800 text-white' : 'bg-white border'}`}>FLASHCARDS</button>
-                            <button onClick={() => setTestMode(true)} className={`px-4 py-1 rounded text-xs font-bold ${testMode ? 'bg-blue-600 text-white' : 'bg-white border'}`}>TEST ÉCRIT</button>
+                            <button onClick={() => setTestMode(true)} className={`px-4 py-1 rounded text-xs font-bold ${testMode ? 'bg-blue-600 text-white' : 'bg-white border'}`}>WRITTEN TEST</button>
                         </div>
                     </header>
 
@@ -86,12 +86,12 @@
                                 <div className="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-8 border">
                                     <span className="text-[10px] text-stone-400 font-bold uppercase">{currentCard.category}</span>
                                     <h2 className="text-3xl font-serif text-center mt-2">{currentCard.item}</h2>
-                                    <p className="mt-8 text-stone-300 text-[10px] font-bold tracking-widest">TAP POUR RÉVÉLER</p>
+                                    <p className="mt-8 text-stone-300 text-[10px] font-bold tracking-widest">TAP TO REVEAL</p>
                                 </div>
                                 <div className="absolute w-full h-full backface-hidden bg-stone-800 text-white rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center text-center rotate-y-180">
                                     <p className="text-xl italic">"{currentCard.description}"</p>
                                     <button onClick={(e) => { e.stopPropagation(); toggleMastered(currentCard.item); }} className={`mt-6 px-4 py-2 rounded-full text-xs font-bold ${mastered.includes(currentCard.item) ? 'bg-green-600' : 'bg-white text-black'}`}>
-                                        {mastered.includes(currentCard.item) ? 'MAÎTRISÉ' : 'MARQUER COMME APPRIS'}
+                                        {mastered.includes(currentCard.item) ? 'MASTERED' : 'MARK AS LEARNED'}
                                     </button>
                                 </div>
                             </div>
@@ -99,19 +99,19 @@
                     ) : (
                         <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border">
                             <h2 className="text-xl font-serif text-center text-blue-600 font-bold">{currentCard.item}</h2>
-                            <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Écrivez la description ici..." className="w-full h-32 p-4 mt-4 bg-stone-50 border rounded-xl focus:outline-none focus:border-blue-500" />
+                            <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Write the description here..." className="w-full h-32 p-4 mt-4 bg-stone-50 border rounded-xl focus:outline-none focus:border-blue-500" />
                             {showAnswer && <div className="mt-4 p-4 bg-blue-50 rounded-lg text-sm italic">"{currentCard.description}"</div>}
                             <div className="flex gap-2 mt-4">
-                                <button onClick={() => setShowAnswer(!showAnswer)} className="flex-1 bg-stone-800 text-white py-2 rounded-lg font-bold text-xs uppercase">Vérifier</button>
+                                <button onClick={() => setShowAnswer(!showAnswer)} className="flex-1 bg-stone-800 text-white py-2 rounded-lg font-bold text-xs uppercase">Check</button>
                                 <button onClick={() => toggleMastered(currentCard.item)} className={`px-4 py-2 rounded-lg border ${mastered.includes(currentCard.item) ? 'bg-green-500 text-white border-green-500' : ''}`}>✓</button>
                             </div>
                         </div>
                     )}
 
                     <div className="flex justify-between items-center">
-                        <button onClick={() => {setCurrentIndex((currentIndex - 1 + filteredCards.length) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Précédent</button>
+                        <button onClick={() => {setCurrentIndex((currentIndex - 1 + filteredCards.length) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Previous</button>
                         <span className="text-[10px] font-bold text-stone-400">{currentIndex + 1} / {filteredCards.length}</span>
-                        <button onClick={() => {setCurrentIndex((currentIndex + 1) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Suivant</button>
+                        <button onClick={() => {setCurrentIndex((currentIndex + 1) % filteredCards.length); setIsFlipped(false); setShowAnswer(false); setUserInput("");}} className="px-4 py-2 bg-white border rounded-lg text-xs font-bold uppercase">Next</button>
                     </div>
                 </div>
             );
